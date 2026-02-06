@@ -1,4 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) project with a **Vercel Queues** demo: a small UI to send tasks to a queue and see them move from queued → processing → completed with duration.
+
+## Queue demo
+
+- **UI**: List of tasks, form to add a task (sent to the queue), and live-updating status (queued / processing / completed) with duration.
+- **APIs**: `GET /api/tasks` (list), `POST /api/tasks/send` (enqueue a task). Consumer runs in `src/app/api/queue/route.ts` (triggered by Vercel when messages are available).
+- **Storage**: Task list is stored in **Vercel KV** so the queue worker can update status when it finishes.
+
+### Setup (required for queue + status)
+
+1. **Vercel KV**  
+   In the [Vercel dashboard](https://vercel.com/dashboard), add a KV store (e.g. Redis/Upstash from the integrations). Connect it to this project so `KV_REST_API_URL` and `KV_REST_API_TOKEN` are set.
+
+2. **Vercel Queues (Beta)**  
+   Ensure your project has access to [Vercel Queues](https://vercel.com/changelog/vercel-queues-is-now-in-limited-beta). The queue trigger is configured in `vercel.json` (topic: `tasks`, consumer: `worker`).
+
+3. **Local dev**  
+   Pull env vars so KV (and queue) work locally:
+   ```bash
+   vc env pull
+   bun run dev
+   ```
+
+Then open [http://localhost:3000](http://localhost:3000): add tasks and watch them move to “Processing…” and then “Completed” with duration. The page polls every 2 seconds.
 
 ## Getting Started
 

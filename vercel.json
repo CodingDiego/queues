@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "src/app/api/queue/route.ts": {
+      "experimentalTriggers": [
+        {
+          "type": "queue/v1beta",
+          "topic": "tasks",
+          "consumer": "worker",
+          "maxAttempts": 3,
+          "retryAfterSeconds": 10,
+          "initialDelaySeconds": 0
+        }
+      ]
+    }
+  }
+}
