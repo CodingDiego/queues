@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { send } from "@vercel/queue";
+import { start } from "workflow/api";
 import { addTask, getTasks } from "@/lib/tasks-store";
-import type { Task, QueueTaskPayload } from "@/lib/types";
+import { processTaskWorkflow } from "@/app/workflows/process-task";
+import type { Task } from "@/lib/types";
 
 export async function POST(request: Request) {
   try {
@@ -24,15 +25,14 @@ export async function POST(request: Request) {
     };
     await addTask(task);
 
-    const payload: QueueTaskPayload = { taskId, label };
-    await send("tasks", payload);
+    await start(processTaskWorkflow, [taskId, label]);
 
     const tasks = await getTasks();
     return NextResponse.json(tasks);
   } catch (error) {
     console.error("POST /api/tasks/send error:", error);
     return NextResponse.json(
-      { error: "Failed to send task to queue or save task." },
+      { error: "Failed to start workflow or save task." },
       { status: 500 }
     );
   }

@@ -178,7 +178,7 @@ export default function Home() {
         </section>
 
         <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">
-          Requires Vercel KV and Queues (Beta). Polling every 2s.
+          Uses Vercel Workflow + KV. Polling every 2s.
         </p>
       </main>
     </div>
